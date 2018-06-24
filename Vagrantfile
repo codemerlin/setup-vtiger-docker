@@ -29,6 +29,8 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8002, host: 3110
+
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -64,9 +66,17 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get install -y git curl
-    git clone https://github.com/codemerlin/setup-vtiger-docker.git
-    curl -fsSL https://raw.githubusercontent.com/codemerlin/install-docker/master/install.sh | bash 
+    apt-get update
+    # curl -fsSL https://raw.githubusercontent.com/codemerlin/install-docker/master/install.sh | bash 
   SHELL
+
+  $script = <<-SCRIPT
+    curl -fsSL https://raw.githubusercontent.com/codemerlin/install-docker/master/install.sh | bash 
+    git clone https://github.com/codemerlin/setup-vtiger-docker.git
+ SCRIPT
+
+  config.vm.provision "shell", inline: $script ,privileged:false
+
+
+
 end
